@@ -1,0 +1,2 @@
+# Optional. The current server uses faster-whisper transcription without this package.
+silero-vad

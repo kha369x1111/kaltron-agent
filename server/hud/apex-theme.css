@@ -1,0 +1,262 @@
+/* KALTRON composition using APEX's orb, particle core, and shader. */
+:root {
+  --bg: #050b14;
+  --panel: rgba(7, 21, 34, .68);
+  --line: rgba(94, 195, 215, .19);
+  --cyan: #00e5ff;
+  --cyan-dim: #247e91;
+  --amber: #ffb300;
+  --txt: #d1e8ed;
+  --txt-dim: #7e9dab;
+}
+body {
+  background: #050b14;
+  color: var(--txt);
+}
+#apexBackground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  direction: ltr;
+}
+.apex-base {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 90% 80% at 50% 42%, #123049 0%, #0a1d30 38%, #07111f 72%, #050b14 100%);
+}
+.apex-lightcast {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 43%, rgba(0, 229, 255, .13), transparent 50%);
+  mix-blend-mode: screen;
+}
+#grid {
+  position: relative;
+  grid-template-columns: minmax(250px, 295px) minmax(320px, 1fr) minmax(250px, 295px);
+  grid-template-rows: 64px 1fr 30px;
+  gap: 12px;
+  padding: 14px;
+  isolation: auto;
+}
+header,
+.panel {
+  clip-path: none;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  backdrop-filter: blur(15px) saturate(1.2);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .16), inset 0 1px rgba(190, 243, 255, .045);
+}
+header {
+  padding-inline: 22px;
+  background: rgba(5, 16, 28, .75);
+}
+header h1 {
+  font-size: clamp(16px, 1.25vw, 21px);
+  letter-spacing: .29em;
+  color: #dffaff;
+  text-shadow: 0 0 18px rgba(0, 229, 255, .6);
+}
+header .sub { letter-spacing: .11em; color: #7ca6b6; }
+.langToggle {
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(255, 179, 0, .07);
+  border-color: rgba(255, 179, 0, .38);
+}
+.col { gap: 10px; }
+.panel { padding: 15px 16px; }
+.panel h2 {
+  font-size: 11px;
+  letter-spacing: .16em;
+  color: #e0f9ff;
+  padding-bottom: 9px;
+  margin-bottom: 10px;
+}
+.panel h2 .num { color: rgba(255, 179, 0, .76); }
+.kv { line-height: 1.5; padding: 3px 0; }
+.kv b { color: #b9f5f6; }
+button.btn {
+  border-radius: 9px;
+  background: rgba(2, 38, 54, .72);
+  color: #b5f8ff;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+button.btn:hover { transform: translateY(-1px); }
+#center { overflow: visible; }
+#reactorWrap {
+  width: min(46vh, 430px);
+  height: min(46vh, 430px);
+  min-height: 280px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: filter .35s;
+}
+#reactorWrap:focus-visible { border-radius: 50%; }
+#apexOrbMount { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.apex-genie-host { position: absolute; inset: 0; direction: ltr; pointer-events: none; }
+.apex-stage {
+  width: 900px;
+  height: 900px;
+  position: absolute;
+  left: 50%; top: 50%;
+  transform-origin: center;
+  pointer-events: none;
+}
+.apex-svg-ring { position: absolute; left: 0; top: 190px; }
+.apex-core-light {
+  position: absolute;
+  left: 390px;
+  top: 390px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #d9ffff 0%, #47eeff 10%, #00bddd 30%, #003d5c 61%, transparent 70%);
+  box-shadow: 0 0 35px #00e5ffcc, 0 0 95px #00e5ff55;
+  animation: apexCoreBreathe 3s ease-in-out infinite;
+}
+.apex-core-light[data-state="speaking"] {
+  background: radial-gradient(circle, #fff9de 0%, #ffc24d 18%, #ff8c00 42%, transparent 72%);
+  box-shadow: 0 0 45px #ffb300, 0 0 110px #ff8c0066;
+  animation-duration: .8s;
+}
+@keyframes apexCoreBreathe { 50% { transform: scale(1.13); opacity: .82; } }
+#kaltron-avatar {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+#coreState {
+  z-index: 2;
+  justify-content: flex-end;
+  padding-bottom: 12%;
+  text-align: center;
+}
+#coreState .st {
+  font-size: 11px;
+  letter-spacing: .18em;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(2, 16, 27, .7);
+  border: 1px solid rgba(0, 229, 255, .15);
+}
+#coreState .hint { font-size: 10px; letter-spacing: .08em; margin-top: 9px; }
+#feed { border-top: 1px solid rgba(0, 229, 255, .13); padding-top: 12px; }
+.msg { border-radius: 11px; background: rgba(4, 23, 38, .78); }
+#chatInput { border-radius: 10px; background: rgba(2, 18, 30, .86); }
+#viewerBox { clip-path: none; border-radius: 14px; }
+footer { color: #86aab9; }
+
+.genie-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  overflow: hidden;
+  pointer-events: none;
+  direction: ltr;
+  background: radial-gradient(circle at 50% 45%, rgba(3, 35, 61, .98) 0%, #020b17 50%, #00030a 100%);
+  backdrop-filter: blur(12px);
+}
+.genie-expanding-orb {
+  position: absolute;
+  left: calc(50% - 100px);
+  top: calc(48% - 100px);
+  width: 200px;
+  height: 200px;
+  border: 2px solid #00e5ff;
+  border-radius: 50%;
+  box-shadow: 0 0 35px #00e5ff, inset 0 0 35px #147dff88;
+}
+.genie-aura {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 48%, transparent 10%, rgba(0, 229, 255, .08) 32%, transparent 62%),
+              radial-gradient(circle at 55% 37%, rgba(20, 125, 255, .13), transparent 30%);
+}
+.genie-title {
+  position: absolute;
+  top: 5vh;
+  left: 0; right: 0;
+  z-index: 4;
+  text-align: center;
+  font: 500 clamp(16px, 2vw, 28px) 'JetBrains Mono', monospace;
+  letter-spacing: .4em;
+  color: #c8faff;
+  text-shadow: 0 0 20px #00e5ffaa;
+}
+.genie-avatar-reveal {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.kaltron-3d-stage {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  width: min(88vw, 91vh);
+  height: min(88vw, 91vh);
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 28px rgba(0, 229, 255, .15));
+  pointer-events: none;
+}
+.kaltron-3d-stage canvas { display: block; pointer-events: none; }
+#reactorWrap.genie-open {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+#reactorWrap.genie-open #apexOrbMount { opacity: 0; }
+#reactorWrap.genie-open #kaltron-avatar {
+  opacity: 1;
+  width: 100%; height: 100%;
+  animation: genieFigureIn .8s ease-out both;
+}
+#reactorWrap.genie-open.genie-3d-ready #kaltron-avatar { opacity: 0; animation: none; }
+#reactorWrap.genie-open #coreState { padding-bottom: 3vh; }
+#reactorWrap.genie-open #coreState .st {
+  font-size: clamp(13px, 1.6vw, 19px);
+  background: rgba(2, 16, 27, .54);
+}
+#reactorWrap.genie-open #coreState .hint { color: #b1d7e1; }
+@keyframes genieFigureIn { from { opacity: 0; filter: blur(18px) brightness(2); } to { opacity: 1; filter: none; } }
+#genieClose {
+  display: none;
+  position: absolute;
+  top: 3vh;
+  right: 3vw;
+  z-index: 3;
+  font-size: 13px;
+  letter-spacing: .14em;
+  background: rgba(0, 12, 21, .75);
+}
+#reactorWrap.genie-open #genieClose { display: block; }
+#viewer { z-index: 90; }
+#holoStage { z-index: 80; }
+
+@media (max-width: 1100px) {
+  #grid { grid-template-columns: minmax(215px, 260px) minmax(280px, 1fr) minmax(215px, 260px); }
+  .panel { padding: 11px 12px; }
+}
+@media (max-width: 880px) {
+  #grid { display: flex; padding: 10px; gap: 10px; height: auto; min-height: 100dvh; }
+  header { min-height: 58px; }
+  #reactorWrap { width: min(76vw, 360px); height: min(76vw, 360px); }
+  #reactorWrap.genie-open { width: 100vw; height: 100dvh; }
+  #feed { min-height: 110px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #reactorWrap.genie-open #kaltron-avatar { animation: none; }
+  .genie-expanding-orb { display: none; }
+}

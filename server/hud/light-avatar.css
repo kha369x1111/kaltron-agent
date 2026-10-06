@@ -1,0 +1,13 @@
+#reactorWrap{width:min(34vh,300px);height:min(34vh,300px);outline:none;display:grid;place-items:center}
+#reactorWrap:focus-visible{outline:1px solid #00e5ff;outline-offset:8px;border-radius:50%}
+#lightOrb{position:absolute;inset:12%;border-radius:50%;border:1px solid #00e5ff99;background:radial-gradient(circle at 50% 55%,#ffb30055 0 3%,#00e5ff22 12%,#03101c 52%,#00e5ff18 70%,transparent 72%);box-shadow:0 0 28px #00e5ff35,inset 0 0 32px #00e5ff18;transition:transform .25s ease,box-shadow .25s ease}
+#lightOrb:before,#lightOrb:after{content:"";position:absolute;inset:-9%;border:1px solid #00e5ff55;border-left-color:transparent;border-right-color:transparent;border-radius:50%;animation:kaltron-spin 14s linear infinite}
+#lightOrb:after{inset:8%;border-color:#ffb30066 transparent;animation-direction:reverse;animation-duration:9s}
+#lightOrb span{position:absolute;inset:27%;border-radius:50%;background:radial-gradient(circle,#fff 0 2%,#00e5ff 4%,#007d9966 28%,transparent 68%);box-shadow:0 0 22px #00e5ffaa}
+#lightOrb i{position:absolute;left:50%;top:50%;width:4px;height:4px;border-radius:50%;background:#ffb300;box-shadow:0 0 14px 5px #ff8c0066}
+#reactorWrap.awake #lightOrb{transform:scale(1.05);box-shadow:0 0 42px #00e5ff66,inset 0 0 42px #00e5ff26}
+#reactorWrap.speaking #lightOrb{box-shadow:0 0 52px #ffb30070,inset 0 0 48px #ff8c0033}
+#genieClose{display:none!important}
+@keyframes kaltron-spin{to{transform:rotate(360deg)}}
+@media(max-width:900px){#reactorWrap{width:min(58vw,250px);height:min(58vw,250px)}}
+@media(prefers-reduced-motion:reduce){#lightOrb:before,#lightOrb:after{animation:none}}

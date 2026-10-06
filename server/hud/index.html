@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KALTRON</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KALTRON">
+<meta name="theme-color" content="#020d1a">
+<link rel="icon" type="image/svg+xml" href="assets/kaltron-icon.svg">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="light-avatar.css">
+</head>
+<body>
+<div id="pinGate" style="display:none; position:fixed; inset:0; z-index:200; background:#020509f2;
+  flex-direction:column; align-items:center; justify-content:center; gap:14px">
+  <div data-i18n="access_code" style="font-family:'JetBrains Mono','Tajawal',sans-serif; font-size:18px; letter-spacing:2px; color:var(--cyan); text-shadow:0 0 20px #00e5ff88">رمز دخول KALTRON</div>
+  <input id="pinInput" type="password" autocomplete="off" style="background:#06101c; border:1px solid var(--cyan-dim);
+    color:#cfeefb; padding:10px 14px; font-family:'JetBrains Mono'; font-size:16px; letter-spacing:4px; text-align:center; width:240px; outline:none">
+  <button class="btn" id="pinBtn" data-i18n="authenticate">دخول</button>
+  <div id="pinMsg" style="font-size:12px; color:var(--txt-dim); letter-spacing:2px">&nbsp;</div>
+</div>
+<div id="boot">
+  <div id="bootLogo">KALTRON</div>
+  <div id="bootSub" data-i18n="boot_sub">واجهة Hermes العصبية</div>
+  <div id="bootLines"></div>
+</div>
+<div id="apexBackground" aria-hidden="true"></div>
+<div id="grid">
+  <header>
+    <h1>K.A.L.T.R.O.N</h1>
+    <div class="sub"><span data-i18n="agent_interface">واجهة Hermes Agent</span> &nbsp;//&nbsp; <span id="connState">غير متصل</span></div>
+    <div class="headerTools"><button class="langToggle" id="langToggle" type="button" aria-label="Switch language">EN | عربي</button><div id="clock">--:--:--</div></div>
+  </header>
+
+  <!-- LEFT COLUMN -->
+  <div class="col">
+    <div class="panel"><h2><span data-i18n="voice_link">رابط الصوت</span><span class="num">01</span></h2>
+      <div class="kv"><span><span class="dot" id="wsDot"></span><span data-i18n="socket">المقبس</span></span><b id="wsState">غير متصل</b></div>
+      <div class="kv"><span><span class="dot" id="micDot"></span><span data-i18n="microphone">الميكروفون</span></span><b id="micState">خامل</b></div>
+      <div class="kv"><span data-i18n="input_level">مستوى الإدخال</span><b>&nbsp;</b></div>
+      <div class="bar"><i id="levelBar"></i></div>
+      <div style="margin-top:8px; display:flex; gap:6px">
+        <button class="btn" id="talkBtn" style="flex:1" data-i18n="engage_voice">تفعيل الصوت</button>
+        <button class="btn danger" id="stopBtn"><span data-i18n="stop">■ إيقاف</span></button>
+      </div>
+      <button class="btn wakeBtn" id="wakeArmBtn" type="button">تفعيل الاستيقاظ الصوتي والتصفيق</button>
+    </div>
+    <div class="panel"><h2><span data-i18n="agent_activity">نشاط الوكيل</span><span class="num">02</span></h2>
+      <div id="activity"><div data-i18n="no_activity">— لا يوجد نشاط بعد —</div></div>
+    </div>
+    <div class="panel"><h2><span data-i18n="turn_metrics">مقاييس المحادثة</span><span class="num">03</span></h2>
+      <div class="kv"><span data-i18n="turns">الجولات</span><b id="mTurns">0</b></div>
+      <div class="kv"><span data-i18n="speech_audio">من الكلام إلى الصوت</span><b id="mFirst">—</b></div>
+      <div class="kv"><span data-i18n="last_total">المدة الأخيرة</span><b id="mTotal">—</b></div>
+      <div class="kv"><span data-i18n="brain">الدماغ</span><b id="mBrain">—</b></div>
+    </div>
+    <div class="panel"><h2><span data-i18n="views">العروض</span><span class="num">04</span></h2>
+      <button class="btn viewBtn" data-i18n="kanban_board" onclick="openView('KANBAN','/kanban')">▸ لوحة كانبان</button>
+      <button class="btn viewBtn" data-i18n="hermes_dashboard" onclick="openView('HERMES DASHBOARD','/')">▸ لوحة Hermes</button>
+      <button class="btn viewBtn" data-i18n="dashboard_chat" onclick="openView('CHAT','/chat')">▸ محادثة اللوحة</button>
+    </div>
+    <div class="panel"><h2><span data-i18n="session">الجلسة</span><span class="num">05</span></h2>
+      <div class="kv"><span data-i18n="conversation">المحادثة</span><b>kaltron-main</b></div>
+      <div class="kv"><span data-i18n="memory_scope">نطاق الذاكرة</span><b>kaltron:user:main</b></div>
+      <div class="kv"><span data-i18n="active_sessions">الجلسات النشطة</span><b id="hSessions">—</b></div>
+      <div class="kv"><span data-i18n="running_agents">الوكلاء العاملون</span><b id="hAgents">—</b></div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div id="center">
+    <div id="approvals"></div>
+    <div id="reactorWrap" title="اضغط للتحدث" data-i18n-title="talk_hint" role="button" tabindex="0" aria-label="Activate KALTRON voice">
+      <div id="lightOrb" aria-hidden="true"><span></span><i></i></div>
+      <button id="genieClose" class="btn" type="button" aria-label="Close fullscreen avatar">ESC ×</button>
+      <div id="coreState"><div class="st" id="stateLabel">KALTRON — وضع الاستعداد</div><div class="hint" id="stateHint">اضغط الشخصية أو المسافة للتحدث</div></div>
+    </div>
+    <div id="feed"></div>
+    <div id="chatRow">
+      <input id="chatInput" data-i18n-placeholder="chat_placeholder" placeholder="اكتب إلى Hermes…" autocomplete="off">
+      <button class="btn" id="sendBtn" data-i18n="send">إرسال</button>
+      <button class="btn" id="clearBtn" data-i18n="clear" data-i18n-title="clear_title" title="مسح المحادثة الظاهرة">مسح</button>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="col">
+    <div class="panel"><h2><span data-i18n="models_loadout">النماذج المحملة</span><span class="num">06</span></h2>
+      <div class="kv"><span data-i18n="brain">الدماغ</span><b>hermes-agent</b></div>
+      <div class="kv"><span data-i18n="stt">التعرف على الكلام</span><b>Whisper small (multilingual)</b></div>
+      <div class="kv"><span data-i18n="tts">تحويل النص لكلام</span><b>Edge TTS · ar-JO-TaimNeural</b></div>
+      <div class="kv"><span data-i18n="fallback">الاحتياطي</span><b>claude-haiku-4-5</b></div>
+      <div style="border-top:1px solid var(--line); margin:6px 0 4px"></div>
+      <div class="kv"><span data-i18n="tokens_today">رموز اليوم</span><b id="uTok">—</b></div>
+      <div class="kv" id="uCostRow" style="display:none"><span data-i18n="cost_today">التكلفة المقدّرة اليوم</span><b id="uCost">—</b></div>
+      <div class="kv"><span data-i18n="turns_today">جولات اليوم</span><b id="uTurns">—</b></div>
+      <div class="kv"><span data-i18n="speech_today">نص الصوت اليوم</span><b id="uTts">—</b></div>
+    </div>
+    <div class="panel"><h2><span data-i18n="machines">الأجهزة</span><span class="num">07</span></h2>
+      <div id="machinesList"><div class="kv"><span data-i18n="loading">جارٍ التحميل…</span></div></div>
+    </div>
+    <div class="panel"><h2><span data-i18n="skills">المهارات</span><span class="num">08</span></h2>
+      <div class="kv"><span data-i18n="loaded_skills">المهارات المحملة</span><b id="skillCount">—</b></div>
+      <div id="skillsList"></div>
+    </div>
+    <div class="panel"><h2><span data-i18n="diagnostics">التشخيص</span><span class="num">09</span></h2>
+      <div class="kv"><span><span class="dot" id="apiDot"></span>Hermes API</span><b id="apiState">—</b></div>
+      <div class="kv"><span>CPU</span><b id="hCpu">—</b></div>
+      <div class="kv"><span data-i18n="memory">الذاكرة</span><b id="hMem">—</b></div>
+      <div class="kv"><span data-i18n="refreshed">آخر تحديث</span><b id="hWhen">—</b></div>
+    </div>
+    <div class="panel"><h2><span data-i18n="automations">الأتمتة</span><span class="num">10</span></h2>
+      <div id="jobsList"><div>—</div></div>
+    </div>
+  </div>
+
+  <div id="holoStage"></div>
+
+  <div id="viewer">
+    <div id="viewerBox">
+      <div id="viewerBar">
+        <h3 id="viewerTitle">KANBAN</h3>
+        <div class="vbtns">
+          <button class="btn" id="viewerPop" data-i18n="open_tab">فتح تبويب</button>
+          <button class="btn danger" id="viewerClose" data-i18n="close">✕ إغلاق</button>
+        </div>
+      </div>
+      <iframe id="viewerIframe" src="about:blank" title="view"></iframe>
+    </div>
+  </div>
+
+  <footer>
+    <span></span>
+    <span id="footMsg">جاهز</span>
+    <span>KALTRON CORE v1.0</span>
+  </footer>
+</div>
+
+<script src="light-avatar.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>

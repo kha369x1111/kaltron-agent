@@ -1,0 +1,10 @@
+{
+  "name": "kaltron-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KALTRON Agent - Arabic AI Butler",
+  "license": "MIT",
+  "scripts": {
+    "build:hud": "npm --prefix server/hud/apex run build"
+  }
+}

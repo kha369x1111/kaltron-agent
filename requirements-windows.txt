@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+requests
+pyyaml
+numpy
+anthropic
+faster-whisper
+websockets
+psutil
+edge-tts
+pydub
+imageio-ffmpeg

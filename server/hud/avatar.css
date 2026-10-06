@@ -1,0 +1,16 @@
+#reactorWrap{width:min(48vh,470px);height:min(48vh,470px);outline:none;isolation:isolate}
+#reactorWrap:focus-visible{outline:1px solid #ffb300;outline-offset:3px}
+#kaltron-avatar{display:block;width:100%;height:100%;filter:drop-shadow(0 0 11px #00e5ff55)}
+#coreState{justify-content:flex-end;padding-bottom:15%;transition:opacity .4s,transform .4s;text-align:center}
+#reactorWrap.awake #coreState{padding-bottom:3%;transform:translateY(5px)}
+#reactorWrap.awake #coreState .hint{opacity:0}
+#reactorWrap.awake #coreState .st{font-size:11px;letter-spacing:3px;background:#020d1abb;padding:3px 8px}
+#reactorWrap.speaking #kaltron-avatar{filter:drop-shadow(0 0 18px #ffb30088)}
+@media (max-width:880px){
+  #reactorWrap{width:min(74vw,360px);height:min(74vw,360px)}
+  #coreState{padding-bottom:11%}
+}
+@media (prefers-reduced-motion:reduce){
+  #kaltron-avatar{filter:none}
+  #coreState{transition:none}
+}
